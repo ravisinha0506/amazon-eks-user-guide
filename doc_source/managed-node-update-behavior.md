@@ -6,7 +6,7 @@ When you update a managed node group version to the latest AMI release version f
 
 1. The Auto Scaling group is updated to use the latest launch template with the new AMI\.
 
-1. The Auto Scaling group maximum size and desired size are incremented by 1 to support the new instances that will be launched into your node group\.
+1. The Auto Scaling group maximum size and desired size are incremented by twice the number of distinct availability zones of the ASG to ensure atleast one new instance comes up in every availability zone of your node group\.
 
 1. The Auto Scaling group launches a new instance with the new AMI to satisfy the increased desired size of the node group\.
 
@@ -19,3 +19,7 @@ When you update a managed node group version to the latest AMI release version f
 \* If pods do not drain from a node \(for example, if a pod disruption budget is too restrictive\) for 15 minutes, then one of two things happens:
 + If the update is not forced, then the update fails and reports an error\.
 + If the update is forced, then the pods that could not be drained are deleted\.
+
+Note:
+
+Managed Nodegroup upgrade is not compatible with [Cluster Autoscaler](https://docs.aws.amazon.com/eks/latest/userguide/cluster-autoscaler.html). Upgrade will fail with an issue code NodeCreationFailure or AutoScalingGroupInvalidConfiguration if Cluster Autoscaler changes desired capacity while upgrade is in progress. We recommend disabling Cluster Autoscaler before starting an Upgrade.
